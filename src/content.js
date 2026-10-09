@@ -94,7 +94,7 @@ export const works = [
     year: '2026',
     blurb: 'Photo coverage of the sports, mass dances, and cultural shows, plus the opening day video highlights reel.',
     tags: ['Photography', 'Videography'],
-    image: 'https://picsum.photos/seed/intramurals-mass-dance/900/700',
+    image: 'works/paugnat.jpg',
     href: 'https://www.facebook.com/bisuTheHarpooner/posts/1043365161952192/',
   },
   {
