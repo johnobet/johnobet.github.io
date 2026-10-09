@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Aperture, ArrowUpRight, ArrowLeft, ArrowRight, Trophy } from '@phosphor-icons/react'
-import { profile, about, stack, works, award, process, services } from './content'
+import { profile, about, stack, works, award, services } from './content'
 
 const ease = [0.23, 1, 0.32, 1]
 const nav = [
   ['About', '#about'],
   ['Works', '#works'],
-  ['Process', '#process'],
   ['Contact', '#contact'],
 ]
 const hireHref = `mailto:${profile.email}?subject=Project%20inquiry`
@@ -30,7 +29,7 @@ function Reveal({ children, delay = 0, className = '' }) {
 function Counter({ n, dark }) {
   return (
     <p className={`absolute right-5 top-28 font-sans text-sm tabular-nums md:right-10 ${dark ? 'text-white/40' : 'text-ink/40'}`}>
-      <span className={dark ? 'text-white' : 'text-ink'}>0{n}</span>/05
+      <span className={dark ? 'text-white' : 'text-ink'}>0{n}</span>/04
     </p>
   )
 }
@@ -259,75 +258,6 @@ function Works() {
   )
 }
 
-function Process() {
-  const [active, setActive] = useState(0)
-  const reduce = useReducedMotion()
-  const step = process[active]
-  return (
-    <section id="process" className="relative overflow-hidden bg-ink px-5 py-32 text-white md:px-10">
-      <Counter n={4} dark />
-      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[auto_1fr_1fr]">
-        <div className="flex gap-3 md:flex-col" role="tablist" aria-label="Process steps">
-          {process.map((p, i) => (
-            <button
-              key={p.word}
-              role="tab"
-              aria-selected={i === active}
-              aria-label={p.word}
-              onClick={() => setActive(i)}
-              className="grid size-11 place-items-center"
-            >
-              <span className={`block size-2.5 rounded-full transition-colors ${i === active ? 'bg-white' : 'bg-white/25'}`} />
-            </button>
-          ))}
-        </div>
-
-        <div>
-          {process.map((p, i) => (
-            <button
-              key={p.word}
-              onClick={() => setActive(i)}
-              className={`block text-left font-display text-7xl uppercase leading-[0.95] transition-colors duration-300 md:text-8xl ${
-                i === active ? 'text-white' : 'text-white/25 hover:text-white/50'
-              }`}
-            >
-              {p.word}
-            </button>
-          ))}
-          <AnimatePresence mode="wait">
-            <motion.p
-              key={active}
-              initial={reduce ? false : { opacity: 0, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, filter: 'blur(4px)', transition: { duration: 0.15 } }}
-              transition={{ duration: 0.3, ease }}
-              className="mt-8 max-w-[42ch] leading-relaxed text-white/75"
-              role="tabpanel"
-            >
-              {step.text}
-            </motion.p>
-          </AnimatePresence>
-        </div>
-
-        <div className="relative aspect-[10/11] overflow-hidden rounded-xl bg-white/5">
-          <AnimatePresence initial={false}>
-            <motion.img
-              key={active}
-              src={step.image}
-              alt=""
-              initial={reduce ? false : { opacity: 0, transform: 'scale(1.04)' }}
-              animate={{ opacity: 1, transform: 'scale(1)' }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5, ease }}
-              className="absolute inset-0 size-full object-cover"
-            />
-          </AnimatePresence>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 function Footer() {
   const links = [
     ['Email', `mailto:${profile.email}`],
@@ -336,7 +266,7 @@ function Footer() {
   ]
   return (
     <footer id="contact" className="relative overflow-hidden bg-ink px-5 pt-32 text-white md:px-10">
-      <Counter n={5} dark />
+      <Counter n={4} dark />
       <div className="mx-auto max-w-6xl border-t border-white/10 pt-16">
         <Reveal>
           <p className="font-display text-5xl uppercase leading-none md:text-7xl">Got a project?</p>
@@ -389,7 +319,6 @@ export default function App() {
         <Hero />
         <About />
         <Works />
-        <Process />
       </main>
       <Footer />
     </>

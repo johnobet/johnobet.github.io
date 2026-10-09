@@ -127,22 +127,4 @@ export const award = {
   href: 'https://www.facebook.com/photo.php?fbid=122210357990468009',
 }
 
-export const process = [
-  {
-    word: 'Define',
-    text: 'Every project starts with questions, not code or a camera. Who is it for, what problem does it solve, and what does done look like.',
-    image: 'https://picsum.photos/seed/planning-notes-desk/1000/1100',
-  },
-  {
-    word: 'Design',
-    text: 'Wireframes for apps, shot lists for stories. I plan the structure first so building and filming move fast.',
-    image: 'https://picsum.photos/seed/wireframe-sketch/1000/1100',
-  },
-  {
-    word: 'Deliver',
-    text: 'Build, test, ship. Apps go live with real users, stories get published on deadline.',
-    image: 'https://picsum.photos/seed/camera-on-location/1000/1100',
-  },
-]
-
 export const services = ['Mobile apps', 'Web apps', 'Photo coverage', 'Video production']
