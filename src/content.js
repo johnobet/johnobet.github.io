@@ -5,8 +5,8 @@ export const profile = {
   fullName: 'John Obet Olchondra',
   roles: ['Full Stack Developer', 'Photojournalist', 'Videographer'],
   heroLines: ['Android & Full Stack Developer', 'Photojournalist & Videographer'],
-  // Cut-out portrait (transparent PNG). Drop it at public/me.png.
-  portrait: 'me.png',
+  // Cut-out portrait (transparent WebP). Drop it at public/me.webp.
+  portrait: 'me.webp',
   email: 'johnobetolchondra47@gmail.com',
   facebook: 'https://www.facebook.com/obt.johnny',
   github: 'https://github.com/johnobet',

@@ -7,6 +7,19 @@
     <meta name="description" content="John Obet Olchondra: Android and full stack developer, photojournalist and videographer from Bohol, Philippines." />
     <meta name="theme-color" content="#e8e8e6" />
     <title>John Obet Olchondra | Developer & Visual Storyteller</title>
+    <link rel="preload" as="image" href="/me.webp" fetchpriority="high" />
+    <script>
+      // Set the theme before first paint so there is no light/dark flash.
+      (function () {
+        var t;
+        try {
+          t = localStorage.getItem('theme');
+        } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+        if (t === 'dark') document.querySelector('meta[name="theme-color"]').content = '#161616';
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

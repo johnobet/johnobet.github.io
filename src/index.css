@@ -1,15 +1,43 @@
 @import "tailwindcss";
 @import "@fontsource/anton";
-@import "@fontsource-variable/archivo";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
+  /* Light sections (hero, works). Swapped for dark mode below. */
   --color-paper: #e8e8e6;
+  --color-canvas: #ffffff;
+  --color-panel: #e8e8e6;
+  --color-fg: #0e0e0e;
+  --color-on-fg: #ffffff;
+  --color-smoke: #636363;
+  --color-pill: rgb(255 255 255 / 0.9);
+  /* Always-dark sections (about, contact). */
   --color-ink: #0e0e0e;
-  --color-smoke: #6b6b6b;
   --color-rec: #e2412f;
+
   --font-display: "Anton", "Impact", sans-serif;
-  --font-sans: "Archivo Variable", system-ui, sans-serif;
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #161616;
+  --color-canvas: #111111;
+  --color-panel: #1c1c1c;
+  --color-fg: #ededeb;
+  --color-on-fg: #0e0e0e;
+  --color-smoke: #9b9b9b;
+  --color-pill: rgb(30 30 30 / 0.85);
+  --color-ink: #0a0a0a;
 }
 
 html {
@@ -19,9 +47,10 @@ html {
 
 body {
   background: var(--color-ink);
-  color: var(--color-ink);
+  color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -32,6 +61,11 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-rec);
   outline-offset: 3px;
+}
+
+/* Soft studio light behind the portrait so the black suit separates from a dark background. */
+:root[data-theme="dark"] .hero-spot {
+  background: radial-gradient(ellipse 42% 62% at 50% 78%, rgb(255 255 255 / 0.13), transparent 70%);
 }
 
 /* Hero title marquee: two identical copies, the track slides by half its width. */
@@ -45,7 +79,7 @@ body {
 }
 
 .press {
-  transition: transform 160ms var(--ease-out-strong), background-color 200ms ease, color 200ms ease;
+  transition: transform 160ms var(--ease-out-strong), background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 .press:active {
   transform: scale(0.97);
@@ -56,6 +90,13 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Theme switch: the new theme grows as a circle from the toggle (driven from JS). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 @media (prefers-reduced-motion: reduce) {
