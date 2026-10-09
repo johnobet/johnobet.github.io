@@ -168,16 +168,18 @@ function WorkCard({ w, i }) {
       {...(w.href && { href: w.href, target: '_blank', rel: 'noreferrer' })}
       className={`group block w-[82vw] shrink-0 snap-start sm:w-[24rem] ${i % 2 ? 'md:mt-14' : ''}`}
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-ink/10">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-ink/10 ring-1 ring-ink/10" style={w.bg && { background: w.bg }}>
         <img
           src={w.image}
           alt={`${w.title} cover`}
           loading="lazy"
-          className="size-full object-cover grayscale transition-[filter,transform] duration-500 ease-[var(--ease-out-strong)] group-hover:scale-[1.03] group-hover:grayscale-0"
+          className={`size-full transition-transform duration-500 ease-[var(--ease-out-strong)] group-hover:scale-[1.03] ${
+            w.fit === 'contain' ? 'object-contain p-8' : 'object-cover'
+          }`}
         />
-        <span className="absolute left-3 top-3 font-display text-2xl text-white drop-shadow">0{i + 1}</span>
+        <span className="absolute left-3 top-3 rounded-md bg-ink/75 px-2 font-display text-xl leading-8 text-white">0{i + 1}</span>
         {w.href && (
-          <span className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-full bg-white text-ink opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="absolute bottom-3 right-3 grid size-11 place-items-center rounded-full bg-white text-ink shadow-md ring-1 ring-ink/10 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
             <ArrowUpRight size={18} weight="bold" />
           </span>
         )}

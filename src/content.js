@@ -14,7 +14,7 @@ export const profile = {
 }
 
 export const about =
-  'John Obet Olchondra is a developer and visual storyteller from Bohol. He builds mobile and web apps end to end, from the database and API to the screen in your hand. Behind the camera, he is a photojournalist and videographer for The Harpooner, the student publication of BISU Candijay Campus, covering university programs, sports meets, and graduation recaps.'
+  'John Obet Olchondra is a developer and visual storyteller from Bohol. He builds mobile and web apps end to end, from the database and API to the screen in your hand. Behind the camera, he is a photojournalist and videographer for The Harpooner, the official student publication of BISU Candijay Campus, covering campus events, intramurals, and commencement exercises.'
 
 // slug = Simple Icons name (https://simpleicons.org). No slug = text only.
 export const stack = [
@@ -59,7 +59,7 @@ export const stack = [
   },
 ]
 
-// TODO: replace the picsum placeholders with real images in public/works/.
+// Images live in public/works/. `fit: 'contain'` shows the whole image (logos, icons) on `bg`.
 export const works = [
   {
     title: 'StayEase',
@@ -68,51 +68,47 @@ export const works = [
     blurb:
       'Boarding house finder and booking app for students. Map search, visit scheduling, chat, and online rent payments.',
     tags: ['Flutter', 'Firebase', 'FastAPI', 'PayMongo'],
-    image: 'https://picsum.photos/seed/stayease-boarding-room/900/700',
+    image: 'works/stayease-icon.png',
+    fit: 'contain',
+    bg: '#0f5f5c',
   },
   {
     title: 'Stewards of our Island',
     kind: 'Documentary video',
     year: 'Award',
     blurb:
-      'From Coast to Karst. A short film on the people protecting Bohol, made with The Harpooner team. 3rd place, Geopark video contest.',
-    tags: ['Videography', 'Editing'],
-    image: 'https://picsum.photos/seed/bohol-coast-karst/900/700',
+      'From Coast to Karst. Entry to the Bohol Island Geopark Video Content Creation Contest, made with The Harpooner team. Won 3rd place.',
+    tags: ['Videography'],
+    image: 'works/stewards.jpg',
     href: 'https://www.facebook.com/photo.php?fbid=122210357990468009',
   },
   {
     title: '50th Commencement',
-    kind: 'Graduation recap video',
-    blurb: 'Co-produced cinematic recap of the 50th Commencement Exercises, built around the graduating class and their families.',
-    tags: ['Videography', 'Editing'],
-    image: 'https://picsum.photos/seed/graduation-caps-toss/900/700',
+    kind: 'Video highlights',
+    year: '2026',
+    blurb: 'Highlights of the 50th Commencement Exercises of BISU Candijay Campus. Videographer with Wendell Jotojot, edited by Ahron Badili.',
+    tags: ['Videography'],
+    image: 'works/commencement.jpg',
     href: 'https://www.facebook.com/bisuTheHarpooner/videos/1325924788965864/',
   },
   {
     title: 'Paugnat ug Pasundayag',
-    kind: 'Intramurals coverage',
+    kind: 'Video highlights',
     year: '2026',
-    blurb: 'Photo coverage of the sports, mass dances, and cultural shows, plus the opening day video highlights reel.',
-    tags: ['Photography', 'Videography'],
+    blurb: 'Opening day highlights of the campus intramurals. Videographer, edited by Ahron Badili.',
+    tags: ['Videography'],
     image: 'works/paugnat.jpg',
-    href: 'https://www.facebook.com/bisuTheHarpooner/posts/1043365161952192/',
-  },
-  {
-    title: "World Teachers' Day",
-    kind: 'Event videography',
-    year: '2025',
-    blurb: 'Primary videographer for the general program, coordinating multi-angle coverage with the student production team.',
-    tags: ['Videography', 'Multi-cam'],
-    image: 'https://picsum.photos/seed/teachers-day-stage/900/700',
-    href: 'https://www.facebook.com/bisumcSCV/posts/1746643420795365/',
+    href: 'https://www.facebook.com/bisuTheHarpooner/videos/1076696284890567/',
   },
   {
     title: 'The Harpooner',
     kind: 'Photojournalism',
     year: 'Ongoing',
-    blurb: 'Campus news, features, and sports meets like Paugnat sa Kusog, shot for the student publication of BISU Candijay Campus.',
-    tags: ['Photography', 'Video'],
-    image: 'https://picsum.photos/seed/campus-photojournalism/900/700',
+    blurb: 'Photos and videos of campus news and events for the official student publication of BISU Candijay Campus.',
+    tags: ['Photography', 'Videography'],
+    image: 'works/harpooner-logo.jpg',
+    fit: 'contain',
+    bg: '#ffffff',
     href: 'https://www.facebook.com/bisuTheHarpooner/',
   },
 ]
