@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { Aperture, ArrowUpRight, ArrowLeft, ArrowRight, Trophy } from '@phosphor-icons/react'
+import { Aperture, ArrowUpRight, ArrowLeft, ArrowRight, Check, Copy, EnvelopeSimple, Trophy } from '@phosphor-icons/react'
 import { profile, about, stack, works, award, services } from './content'
 
 const ease = [0.23, 1, 0.32, 1]
@@ -9,7 +9,9 @@ const nav = [
   ['Works', '#works'],
   ['Contact', '#contact'],
 ]
-const hireHref = `mailto:${profile.email}?subject=Project%20inquiry`
+// mailto: does nothing on PCs without an email app, so Hire me goes to the contact options instead.
+const hireHref = '#contact'
+const gmailHref = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}&su=Project%20inquiry`
 
 function Reveal({ children, delay = 0, className = '' }) {
   const reduce = useReducedMotion()
@@ -260,9 +262,39 @@ function Works() {
   )
 }
 
+function CopyEmail() {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    let ok = false
+    try {
+      await navigator.clipboard.writeText(profile.email)
+      ok = true
+    } catch {
+      // Older or embedded browsers: copy through a temporary text field.
+      const t = document.createElement('textarea')
+      t.value = profile.email
+      t.style.position = 'fixed'
+      t.style.opacity = '0'
+      document.body.appendChild(t)
+      t.select()
+      ok = document.execCommand('copy')
+      t.remove()
+    }
+    if (!ok) return window.prompt('Copy my email:', profile.email)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button onClick={copy} className="press inline-flex h-12 items-center gap-2 rounded-lg border border-white/30 px-5 text-sm font-bold uppercase tracking-wider hover:bg-white/10">
+      {copied ? <Check size={18} weight="bold" /> : <Copy size={18} weight="bold" />}
+      <span aria-live="polite">{copied ? 'Copied' : 'Copy email'}</span>
+    </button>
+  )
+}
+
 function Footer() {
   const links = [
-    ['Email', `mailto:${profile.email}`],
+    ['Gmail', gmailHref],
     ['Facebook', profile.facebook],
     ['GitHub', profile.github],
   ]
@@ -272,9 +304,13 @@ function Footer() {
       <div className="mx-auto max-w-6xl border-t border-white/10 pt-16">
         <Reveal>
           <p className="font-display text-5xl uppercase leading-none md:text-7xl">Got a project?</p>
-          <a href={`mailto:${profile.email}`} className="mt-4 inline-block break-all text-lg text-white/80 underline-offset-4 hover:text-white hover:underline md:text-2xl">
-            {profile.email}
-          </a>
+          <p className="mt-4 break-all text-lg text-white/80 md:text-2xl">{profile.email}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href={gmailHref} target="_blank" rel="noreferrer" className="press inline-flex h-12 items-center gap-2 rounded-lg bg-white px-5 text-sm font-bold uppercase tracking-wider text-ink hover:bg-white/85">
+              <EnvelopeSimple size={18} weight="bold" /> Email me
+            </a>
+            <CopyEmail />
+          </div>
         </Reveal>
 
         <div className="mt-16 grid grid-cols-2 gap-10 text-sm md:grid-cols-3">
