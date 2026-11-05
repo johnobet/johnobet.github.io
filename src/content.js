@@ -59,59 +59,119 @@ export const stack = [
   },
 ]
 
-// Images live in public/works/. `fit: 'contain'` shows the whole image (logos, icons) on `bg`.
-export const works = [
+// `cat` drives the filter buttons: a new category shows up by itself. Images live in public/works/.
+const shot = (name) => `works/photos/${name}.jpg`
+
+export const photos = [
   {
-    title: 'StayEase',
-    kind: 'Mobile app',
+    title: 'BSOA Pinning Ceremony',
+    cat: 'Event Coverage',
     year: '2026',
-    blurb:
-      'Boarding house finder and booking app for students. Map search, visit scheduling, chat, and online rent payments.',
-    tags: ['Flutter', 'Firebase', 'FastAPI', 'PayMongo'],
-    image: 'works/stayease-icon.png',
-    fit: 'contain',
-    bg: '#0f5f5c',
+    blurb: 'The seventh BS Office Administration pinning and orientation program at BISU Candijay, from the nameplates to the speakers.',
+    cover: shot('pinning-3'),
+    images: ['pinning-3', 'pinning-1', 'pinning-2', 'pinning-4'].map(shot),
+    href: 'https://www.facebook.com/share/p/1KNU8FYBa7/',
   },
   {
-    title: 'Stewards of our Island',
-    kind: 'Documentary video',
-    year: 'Award',
-    blurb:
-      'From Coast to Karst. Entry to the Bohol Island Geopark Video Content Creation Contest, made with The Harpooner team. Won 3rd place.',
-    tags: ['Videography'],
-    image: 'works/stewards.jpg',
-    href: 'https://www.facebook.com/photo.php?fbid=122210357990468009',
+    title: 'Short and Sweet Play',
+    cat: 'Stage & Performance',
+    year: '2025',
+    blurb: 'Stage coverage of the musical play that won BISU Candijay the championship.',
+    cover: shot('musical-2'),
+    images: ['musical-2', 'musical-3', 'musical-4'].map(shot),
+    href: 'https://www.facebook.com/share/p/19nAgePiti/',
   },
+  {
+    title: 'The Harpooner Staff',
+    cat: 'Portrait',
+    year: '2026',
+    blurb: 'Editorial portraits of the A.Y. 2026 to 2027 editorial board and staff.',
+    cover: shot('board-2'),
+    images: ['board-2', 'board-1', 'board-3'].map(shot),
+    href: 'https://www.facebook.com/share/p/19vwLYpRra/',
+  },
+  {
+    title: 'LEAP for School Leaders',
+    cat: 'Event Coverage',
+    year: '2026',
+    blurb: 'Leadership seminar by the School of Advanced Studies, held at Candijay Elementary School.',
+    cover: shot('leap-4'),
+    images: ['leap-4', 'leap-1', 'leap-2', 'leap-3'].map(shot),
+    href: 'https://www.facebook.com/share/p/1EdwLJRrtX/',
+  },
+]
+
+export const videos = [
   {
     title: '50th Commencement',
-    kind: 'Video highlights',
+    cat: 'Graduation',
     year: '2026',
+    views: '43K views',
     blurb: 'Highlights of the 50th Commencement Exercises of BISU Candijay Campus. Videographer with Wendell Jotojot, edited by Ahron Badili.',
-    tags: ['Videography'],
-    image: 'works/commencement.jpg',
-    href: 'https://www.facebook.com/bisuTheHarpooner/videos/1325924788965864/',
+    cover: 'works/commencement.jpg',
+    href: 'https://www.facebook.com/share/v/1FcV8exhbM/',
   },
   {
     title: 'Paugnat ug Pasundayag',
-    kind: 'Video highlights',
+    cat: 'Event Highlights',
     year: '2026',
+    views: '42K views',
     blurb: 'Opening day highlights of the campus intramurals. Videographer, edited by Ahron Badili.',
-    tags: ['Videography'],
-    image: 'works/paugnat.jpg',
-    href: 'https://www.facebook.com/bisuTheHarpooner/videos/1076696284890567/',
+    cover: 'works/paugnat.jpg',
+    href: 'https://www.facebook.com/share/v/1DCBXr4uD4/',
   },
   {
-    title: 'The Harpooner',
-    kind: 'Photojournalism',
-    year: 'Ongoing',
-    blurb: 'Photos and videos of campus news and events for the official student publication of BISU Candijay Campus.',
-    tags: ['Photography', 'Videography'],
-    image: 'works/harpooner-logo.jpg',
-    fit: 'contain',
-    bg: '#ffffff',
-    href: 'https://www.facebook.com/bisuTheHarpooner/',
+    title: '17th BISU Charter Day',
+    cat: 'Event Highlights',
+    views: '20K views',
+    blurb: 'All six BISU campuses together at the Candijay Cultural Center. Videographer with Wendell Jotojot and Denver Ugay, edited by Ahron Badili.',
+    cover: 'works/charter.jpg',
+    href: 'https://www.facebook.com/share/v/18sVE6BHJo/',
+  },
+  {
+    title: 'Stewards of our Island',
+    cat: 'Documentary',
+    year: 'Award',
+    blurb: 'From Coast to Karst. Entry to the Bohol Island Geopark Video Content Creation Contest, made with The Harpooner team. Won 3rd place.',
+    cover: 'works/stewards.jpg',
+    href: 'https://www.facebook.com/photo.php?fbid=122210357990468009',
   },
 ]
+
+export const apps = [
+  {
+    title: 'StayEase',
+    cat: 'Mobile Apps',
+    kind: 'Android app',
+    year: '2026',
+    blurb: 'Find, visit, reserve and pay for rooms and homes across Bohol, in one app. Renters see listings on a map with real distances, and owners get one place to list, approve tenants and track rent.',
+    features: [
+      'Map search with distances to school, work or any pinned place',
+      'Visit requests, room reservations and chat with owners',
+      'Rent payments through PayMongo, with GCash and cards',
+      'Owner tools and an admin side for verifying listings',
+    ],
+    tags: ['Flutter', 'Firebase', 'FastAPI', 'PayMongo', 'Cloudinary', 'OpenStreetMap'],
+    icon: 'works/stayease-icon.png',
+    video: 'works/stayease-demo.mp4',
+    poster: 'works/stayease-poster.jpg',
+  },
+  {
+    title: 'This Portfolio',
+    cat: 'Web',
+    kind: 'Website',
+    year: '2026',
+    blurb: 'The site you are on. Designed and built from scratch, with a light and dark theme and motion throughout.',
+    tags: ['React', 'Tailwind CSS', 'Motion', 'Vite'],
+    href: 'https://github.com/johnobet/johnobet.github.io',
+  },
+]
+
+export const harpooner = {
+  name: 'The Harpooner',
+  logo: 'works/harpooner-logo.jpg',
+  href: 'https://www.facebook.com/bisuTheHarpooner/',
+}
 
 export const award = {
   place: '3rd Place',
