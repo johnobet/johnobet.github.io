@@ -1,26 +1,22 @@
 @import "tailwindcss";
-@import "@fontsource/anton";
 @import "@fontsource-variable/geist";
-@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Light sections (hero, works). Swapped for dark mode below. */
-  --color-paper: #e8e8e6;
-  --color-canvas: #ffffff;
-  --color-panel: #e8e8e6;
-  --color-fg: #0e0e0e;
-  --color-on-fg: #ffffff;
-  --color-smoke: #636363;
-  --color-pill: rgb(255 255 255 / 0.9);
-  /* Always-dark sections (about, contact). */
-  --color-ink: #0e0e0e;
-  --color-rec: #e2412f;
+  /* Clean off-white with a single teal accent. Swapped for dark mode below. */
+  --color-bg: #f6f8f9;
+  --color-tint: #eef2f3;
+  --color-surface: #ffffff;
+  --color-fg: #0f1c24;
+  --color-muted: #55656f;
+  --color-line: #dfe5e8;
+  --color-accent: #0b7a6c;
+  --color-accent-strong: #096357;
+  --color-accent-soft: #dff2ee;
+  --color-on-accent: #ffffff;
 
-  --font-display: "Anton", "Impact", sans-serif;
   --font-sans: "Geist Variable", system-ui, sans-serif;
-  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
   --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -30,23 +26,25 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-paper: #161616;
-  --color-canvas: #111111;
-  --color-panel: #1c1c1c;
-  --color-fg: #ededeb;
-  --color-on-fg: #0e0e0e;
-  --color-smoke: #9b9b9b;
-  --color-pill: rgb(30 30 30 / 0.85);
-  --color-ink: #0a0a0a;
+  --color-bg: #0c1214;
+  --color-tint: #101719;
+  --color-surface: #151e21;
+  --color-fg: #eef3f4;
+  --color-muted: #9aaab0;
+  --color-line: #263237;
+  --color-accent: #2dd4bf;
+  --color-accent-strong: #5eead4;
+  --color-accent-soft: #12332f;
+  --color-on-accent: #06211d;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 4rem;
 }
 
 body {
-  background: var(--color-ink);
+  background: var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -54,42 +52,45 @@ body {
 }
 
 ::selection {
-  background: var(--color-rec);
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-rec);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
-/* Soft studio light behind the portrait so the black suit separates from a dark background. */
-:root[data-theme="dark"] .hero-spot {
-  background: radial-gradient(ellipse 42% 62% at 50% 78%, rgb(255 255 255 / 0.13), transparent 70%);
+/* One soft wash of the accent behind the hero. */
+.hero-glow {
+  background: radial-gradient(ellipse 60% 55% at 80% 30%, var(--color-accent-soft), transparent 70%);
 }
 
-/* Hero title marquee: two identical copies, the track slides by half its width. */
-.marquee-track {
-  animation: marquee 38s linear infinite;
+.caret {
+  animation: blink 1s steps(2, start) infinite;
 }
-@keyframes marquee {
+@keyframes blink {
   to {
-    transform: translateX(-50%);
+    visibility: hidden;
   }
 }
 
 .press {
-  transition: transform 160ms var(--ease-out-strong), background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  transition: transform 160ms var(--ease-out-strong), background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
 }
 .press:active {
   transform: scale(0.97);
 }
 
-.no-scrollbar {
-  scrollbar-width: none;
+/* Cards rise a little on hover. Hover only, so a tap on a phone doesn't leave one stuck up. */
+.lift {
+  transition: transform 300ms var(--ease-out-strong), box-shadow 300ms ease;
 }
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px -20px rgb(15 28 36 / 0.35);
+  }
 }
 
 /* Theme switch: the new theme grows as a circle from the toggle (driven from JS). */
@@ -103,7 +104,7 @@ body {
   html {
     scroll-behavior: auto;
   }
-  .marquee-track {
+  .caret {
     animation: none;
   }
 }

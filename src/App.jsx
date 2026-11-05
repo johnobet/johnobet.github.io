@@ -1,47 +1,39 @@
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
+import { animate, AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
 import {
-  Aperture,
-  ArrowUpRight,
+  ArrowDown,
   ArrowLeft,
   ArrowRight,
+  ArrowUpRight,
+  Camera,
   Check,
+  Code,
   Copy,
   EnvelopeSimple,
+  FacebookLogo,
+  GithubLogo,
   Images as ImagesIcon,
+  MapPin,
   Moon,
   Play,
   Sun,
   Trophy,
+  VideoCamera,
   X,
 } from '@phosphor-icons/react'
-import { profile, about, stack, photos, videos, apps, harpooner, award, services } from './content'
+import { profile, about, stack, stats, heroFacts, photos, videos, apps, categories, harpooner, award, services } from './content'
 
 const ease = [0.23, 1, 0.32, 1]
 const nav = [
-  ['About', '#about'],
-  ['Photography', '#photography'],
-  ['Videography', '#videography'],
-  ['Development', '#development'],
-  ['Contact', '#contact'],
+  ['Home', 'top'],
+  ['About', 'about'],
+  ['Works', 'works'],
+  ['Contact', 'contact'],
 ]
-// mailto: does nothing on PCs without an email app, so Hire me goes to the contact options instead.
-const hireHref = '#contact'
 const year = new Date().getFullYear()
 const gmailHref = `https://mail.google.com/mail/?view=cm&fs=1&to=${profile.email}&su=Project%20inquiry`
-
-// Waits for the web fonts so the giant hero type doesn't jump from the fallback font mid-animation.
-function useFontsReady() {
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const done = () => setReady(true)
-    document.fonts?.ready.then(done)
-    const t = setTimeout(done, 1500)
-    return () => clearTimeout(t)
-  }, [])
-  return ready
-}
+const icons = { photography: Camera, videography: VideoCamera, development: Code }
 
 function Reveal({ children, delay = 0, className = '' }) {
   const reduce = useReducedMotion()
@@ -50,7 +42,7 @@ function Reveal({ children, delay = 0, className = '' }) {
       className={className}
       initial={reduce ? false : { opacity: 0, transform: 'translateY(24px)' }}
       whileInView={{ opacity: 1, transform: 'translateY(0px)' }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.7, delay, ease }}
     >
       {children}
@@ -58,46 +50,56 @@ function Reveal({ children, delay = 0, className = '' }) {
   )
 }
 
-// Big type that slides up from behind a mask. The observed element is the unclipped wrapper.
-function MaskText({ as = 'h2', className = '', children, ...rest }) {
+function SectionHead({ kicker, title, text }) {
+  return (
+    <Reveal className="mx-auto max-w-2xl text-center">
+      <p className="text-sm font-semibold text-accent">{kicker}</p>
+      <h2 className="mt-2 text-4xl font-bold tracking-tight md:text-5xl">{title}</h2>
+      {text && <p className="mt-4 leading-relaxed text-muted">{text}</p>}
+    </Reveal>
+  )
+}
+
+// One-time welcome screen, skipped on later visits in the same tab.
+function Loader() {
   const reduce = useReducedMotion()
-  const Tag = motion[as]
+  const [show, setShow] = useState(() => {
+    try {
+      return !reduce && !sessionStorage.getItem('welcomed')
+    } catch {
+      return !reduce
+    }
+  })
+  useEffect(() => {
+    if (!show) return
+    const t = setTimeout(() => {
+      setShow(false)
+      try {
+        sessionStorage.setItem('welcomed', '1')
+      } catch {
+        // Private mode: the welcome just plays again next time.
+      }
+    }, 1700)
+    return () => clearTimeout(t)
+  }, [show])
   return (
-    <Tag
-      className={`overflow-hidden ${className}`}
-      initial={reduce ? false : 'hidden'}
-      whileInView="shown"
-      viewport={{ once: true, margin: '-60px' }}
-      {...rest}
-    >
-      <motion.span
-        className="block"
-        variants={{ hidden: { transform: 'translateY(105%)' }, shown: { transform: 'translateY(0%)' } }}
-        transition={{ duration: 0.9, ease }}
-      >
-        {children}
-      </motion.span>
-    </Tag>
-  )
-}
-
-function Counter({ n, dark }) {
-  return (
-    <p className={`absolute right-5 top-28 font-mono text-xs tabular-nums md:right-10 ${dark ? 'text-white/40' : 'text-fg/40'}`}>
-      <span className={dark ? 'text-white' : 'text-fg'}>0{n}</span>/06
-    </p>
-  )
-}
-
-function SectionTitle({ children, dark, compact }) {
-  return (
-    <MaskText
-      className={`pb-[0.04em] font-display uppercase leading-[0.88] tracking-tight ${
-        compact ? 'text-[15vw] md:text-[7.5rem] lg:text-[10rem]' : 'text-[22vw] md:text-[11rem]'
-      } ${dark ? 'text-white' : 'text-fg'}`}
-    >
-      /{children}
-    </MaskText>
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          className="fixed inset-0 z-50 grid place-items-center bg-bg px-6 text-center"
+          exit={{ opacity: 0, transform: 'translateY(-24px)' }}
+          transition={{ duration: 0.5, ease }}
+        >
+          <motion.div initial={{ opacity: 0, transform: 'translateY(16px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.7, ease }}>
+            <p className="text-sm font-semibold text-accent">Welcome to my portfolio</p>
+            <p className="mt-2 text-4xl font-bold tracking-tight md:text-6xl">{profile.fullName}</p>
+            <div className="mx-auto mt-6 h-1 w-48 overflow-hidden rounded-full bg-line">
+              <motion.div className="h-full origin-left rounded-full bg-accent" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.5, ease: 'easeInOut' }} />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -108,7 +110,7 @@ function ThemeToggle() {
     const next = theme === 'dark' ? 'light' : 'dark'
     const apply = () => {
       document.documentElement.dataset.theme = next
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#161616' : '#e8e8e6')
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0c1214' : '#f6f8f9')
       flushSync(() => setTheme(next))
     }
     try {
@@ -133,159 +135,226 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="press grid size-11 place-items-center rounded-full border border-fg/15 hover:bg-fg/5"
+      className="press grid size-11 place-items-center rounded-full text-muted ring-1 ring-line hover:text-fg"
     >
       {dark ? <Sun size={18} weight="bold" /> : <Moon size={18} weight="bold" />}
     </button>
   )
 }
 
+function useActiveSection() {
+  const [active, setActive] = useState('top')
+  useEffect(() => {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)), { rootMargin: '-45% 0px -50% 0px' })
+    nav.forEach(([, id]) => io.observe(document.getElementById(id)))
+    return () => io.disconnect()
+  }, [])
+  return active
+}
+
 function Nav() {
-  const reduce = useReducedMotion()
+  const active = useActiveSection()
   return (
-    <motion.header
-      className="fixed inset-x-0 top-4 z-40 px-4"
-      initial={reduce ? false : { opacity: 0, transform: 'translateY(-16px)' }}
-      animate={{ opacity: 1, transform: 'translateY(0px)' }}
-      transition={{ duration: 0.8, delay: 0.1, ease }}
-    >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-2xl bg-pill pl-3 pr-3 text-fg shadow-[0_8px_30px_rgba(14,14,14,0.08)] ring-1 ring-fg/10 backdrop-blur-md md:pl-4">
-        <a href="#top" className="flex items-center gap-3" aria-label="Back to top">
-          <span className="grid size-10 place-items-center rounded-lg bg-fg text-on-fg">
-            <Aperture size={22} weight="bold" />
-          </span>
-          <span className="text-sm font-semibold uppercase tracking-wide">{profile.name}</span>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-md">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+        <a href="#top" className="text-lg font-bold tracking-tight text-accent">
+          {profile.name}
         </a>
-        <ul className="hidden items-center gap-3 text-xs font-medium uppercase tracking-[0.14em] lg:flex">
-          {nav.map(([label, href], i) => (
-            <li key={href} className="flex items-center gap-3">
-              {i > 0 && <span className="text-fg/30">/</span>}
-              <a href={href} className="py-2 transition-colors hover:text-rec">
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6">
+          <ul className="hidden items-center gap-6 text-sm font-medium md:flex">
+            {nav.map(([label, id]) => (
+              <li key={id} className="relative">
+                <a href={`#${id}`} className={`block py-2 transition-colors hover:text-fg ${active === id ? 'text-fg' : 'text-muted'}`}>
+                  {label}
+                </a>
+                {active === id && <motion.span layoutId="nav-line" className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-accent" transition={{ type: 'spring', duration: 0.45, bounce: 0.15 }} />}
+              </li>
+            ))}
+          </ul>
           <ThemeToggle />
-          <a
-            href={hireHref}
-            className="press rounded-lg border border-fg px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] hover:bg-fg hover:text-on-fg"
-          >
-            Hire me
-          </a>
         </div>
       </nav>
-    </motion.header>
+    </header>
+  )
+}
+
+function Typed({ words }) {
+  const reduce = useReducedMotion()
+  const [word, setWord] = useState(0)
+  const [length, setLength] = useState(0)
+  const [deleting, setDeleting] = useState(false)
+  useEffect(() => {
+    if (reduce) return
+    const full = length === words[word].length
+    const t = setTimeout(
+      () => {
+        if (!deleting && full) return setDeleting(true)
+        if (deleting && length === 0) {
+          setDeleting(false)
+          return setWord((word + 1) % words.length)
+        }
+        setLength(length + (deleting ? -1 : 1))
+      },
+      !deleting && full ? 1600 : deleting ? 35 : 75,
+    )
+    return () => clearTimeout(t)
+  }, [word, length, deleting, reduce, words])
+  return (
+    <span aria-hidden="true">
+      {reduce ? words[0] : words[word].slice(0, length)}
+      <span className="caret ml-0.5 inline-block h-[1em] w-0.5 translate-y-[0.15em] bg-accent" />
+    </span>
+  )
+}
+
+function Socials() {
+  const links = [
+    ['Facebook', profile.facebook, FacebookLogo],
+    ['GitHub', profile.github, GithubLogo],
+    ['Email', gmailHref, EnvelopeSimple],
+  ]
+  return (
+    <ul className="flex gap-2">
+      {links.map(([label, href, Icon]) => (
+        <li key={label}>
+          <a href={href} target="_blank" rel="noreferrer" aria-label={label} className="press grid size-11 place-items-center rounded-xl bg-surface text-muted ring-1 ring-line hover:text-accent">
+            <Icon size={20} weight="bold" />
+          </a>
+        </li>
+      ))}
+    </ul>
   )
 }
 
 function Portrait() {
-  const ref = useRef(null)
-  const [loaded, setLoaded] = useState(false)
-  const [missing, setMissing] = useState(false)
   const reduce = useReducedMotion()
-  // A cached image can finish loading before React attaches onLoad.
-  useEffect(() => {
-    if (ref.current?.complete && ref.current.naturalWidth) setLoaded(true)
-  }, [])
-  if (missing)
-    return (
-      <div className="absolute bottom-0 left-1/2 z-10 flex h-[62dvh] w-[min(80vw,26rem)] -translate-x-1/2 items-center justify-center rounded-t-[12rem] border-2 border-dashed border-fg/25 p-8 text-center text-sm text-fg/60">
-        Add your cut-out photo as <code className="mx-1 font-mono font-semibold">public/me.webp</code>
-      </div>
-    )
-  // Waits for the image to load, then rises in with a blur so it eases into focus instead of popping.
-  const hidden = reduce
-    ? { opacity: 0, transform: 'translate(-50%, 0px) scale(1)', filter: 'blur(0px)' }
-    : { opacity: 0, transform: 'translate(-50%, 56px) scale(1.04)', filter: 'blur(16px)' }
   return (
-    <motion.img
-      ref={ref}
-      src={profile.portrait}
-      alt={profile.fullName}
-      fetchPriority="high"
-      onLoad={() => setLoaded(true)}
-      onError={() => setMissing(true)}
-      initial={hidden}
-      animate={loaded ? { opacity: 1, transform: 'translate(-50%, 0px) scale(1)', filter: 'blur(0px)' } : hidden}
-      transition={{ duration: reduce ? 0.4 : 1.4, delay: 0.35, ease }}
-      style={{ transformOrigin: '50% 100%' }}
-      className="absolute bottom-0 left-1/2 z-10 h-[78dvh] max-w-none object-contain object-bottom md:h-[86dvh]"
-    />
+    <motion.div
+      className="relative mx-auto w-full max-w-md"
+      initial={reduce ? false : { opacity: 0, transform: 'translateY(32px)' }}
+      animate={{ opacity: 1, transform: 'translateY(0px)' }}
+      transition={{ duration: 1, delay: 0.3, ease }}
+    >
+      <div className="aspect-[4/5] overflow-hidden rounded-[2rem] bg-gradient-to-b from-accent-soft to-surface ring-1 ring-line">
+        <img src={profile.portrait} alt={profile.fullName} fetchPriority="high" className="size-full object-contain object-bottom pt-6" />
+      </div>
+      {heroFacts.map((f, i) => (
+        <motion.div
+          key={f.label}
+          className={`absolute rounded-2xl bg-surface/90 px-4 py-3 shadow-lg ring-1 ring-line backdrop-blur ${i ? 'bottom-10 right-2 md:-right-6' : 'left-2 top-10 md:-left-6'}`}
+          animate={reduce ? undefined : { y: [0, -8, 0] }}
+          transition={{ duration: 5, delay: i * 1.2, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <p className="text-lg font-bold leading-tight text-accent">{f.value}</p>
+          <p className="text-xs text-muted">{f.label}</p>
+        </motion.div>
+      ))}
+    </motion.div>
   )
 }
 
 function Hero() {
-  const fontsReady = useFontsReady()
-  const reduce = useReducedMotion()
-  const title = profile.roles.map((r) => `${r} / `).join('')
-  const show = (delay) => ({
-    initial: reduce ? false : { opacity: 0, transform: 'translateY(20px)' },
-    animate: fontsReady ? { opacity: 1, transform: 'translateY(0px)' } : undefined,
-    transition: { duration: 0.9, delay, ease },
-  })
   return (
-    <section id="top" className="relative min-h-[100dvh] overflow-hidden bg-paper text-fg">
-      <div className="hero-spot pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="absolute left-5 top-28 z-20 text-base font-medium leading-snug md:left-10 md:text-lg">
-        {profile.heroLines.map((l, i) => (
-          <motion.p key={l} {...show(0.15 + i * 0.08)}>
-            {l}
-          </motion.p>
-        ))}
-      </div>
-      <motion.div className="absolute inset-x-0 top-1/2 -translate-y-1/2 select-none" aria-hidden="true" {...show(0.05)}>
-        <div className="marquee-track flex w-max">
-          {[0, 1].map((i) => (
-            <span key={i} className="whitespace-nowrap pr-[0.15em] font-display text-[34vw] uppercase leading-none md:text-[19rem]">
-              {title}
-            </span>
-          ))}
+    <section id="top" className="hero-glow relative overflow-hidden px-5 pb-20 pt-28 lg:min-h-[100dvh] lg:pt-32">
+      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.1fr_1fr]">
+        <div>
+          <Reveal>
+            <p className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 text-sm font-medium text-accent">
+              <MapPin size={15} weight="fill" /> {profile.location}
+            </p>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <h1 className="mt-5 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+              Developer &<span className="block text-accent">Visual Storyteller</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="mt-5 h-8 text-xl font-medium md:text-2xl">
+              <span className="sr-only">{profile.roles.join(', ')}</span>
+              <Typed words={profile.roles} />
+            </p>
+          </Reveal>
+          <Reveal delay={0.24}>
+            <p className="mt-4 max-w-[52ch] leading-relaxed text-muted">{profile.lead}</p>
+          </Reveal>
+          <Reveal delay={0.32}>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {profile.chips.map((c) => (
+                <li key={c} className="rounded-lg bg-surface px-3 py-1.5 text-sm ring-1 ring-line">
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+          <Reveal delay={0.4} className="mt-8 flex flex-wrap items-center gap-3">
+            <a href="#works" className="press inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-6 text-sm font-semibold text-on-accent hover:bg-accent-strong">
+              View my works <ArrowDown size={16} weight="bold" />
+            </a>
+            <a href="#contact" className="press inline-flex h-12 items-center rounded-xl bg-surface px-6 text-sm font-semibold ring-1 ring-line hover:ring-accent">
+              Contact
+            </a>
+            <Socials />
+          </Reveal>
         </div>
-      </motion.div>
-      <h1 className="sr-only">
-        {profile.fullName}, {profile.roles.join(', ')}
-      </h1>
-      <Portrait />
+        <Portrait />
+      </div>
     </section>
+  )
+}
+
+function CountUp({ n, suffix }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true })
+  const reduce = useReducedMotion()
+  useEffect(() => {
+    if (!inView || reduce) return
+    const run = animate(0, n, { duration: 1.4, ease, onUpdate: (v) => (ref.current.textContent = `${Math.round(v)}${suffix}`) })
+    return () => run.stop()
+  }, [inView, reduce, n, suffix])
+  return (
+    <span ref={ref}>
+      {n}
+      {suffix}
+    </span>
   )
 }
 
 function About() {
   return (
-    <section id="about" className="relative bg-ink px-5 pb-24 pt-32 text-white md:px-10 md:pb-32">
-      <Counter n={2} dark />
-      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1fr_1.1fr] md:gap-16">
-        <div>
-          <SectionTitle dark>About</SectionTitle>
-          <ArrowUpRight size={120} weight="bold" className="mt-6 hidden text-white/25 md:block" aria-hidden="true" />
-        </div>
-        <Reveal delay={0.1} className="self-end">
-          <p className="max-w-[56ch] text-lg leading-relaxed text-white/85 md:text-xl md:leading-relaxed">{about}</p>
-          <p className="mt-6 font-mono text-xs uppercase tracking-[0.12em] text-white/50">Student at {profile.school}</p>
+    <section id="about" className="px-5 py-24">
+      <div className="mx-auto max-w-6xl">
+        <SectionHead kicker="About me" title="Code and camera, one storyteller" />
+        <Reveal delay={0.1}>
+          <p className="mx-auto mt-6 max-w-[64ch] text-center text-lg leading-relaxed text-muted">{about}</p>
+          <p className="mt-4 text-center text-sm text-muted">Student at {profile.school}</p>
         </Reveal>
-      </div>
-
-      <div className="mx-auto mt-24 grid max-w-6xl gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-        {stack.map((g, gi) => (
-          <Reveal key={g.group} delay={gi * 0.06}>
-            <h3 className="font-display text-3xl uppercase tracking-wide">{g.group}</h3>
-            <ul className="mt-5 flex flex-wrap gap-2">
-              {g.items.map((t) => (
-                <li
-                  key={t.name}
-                  className="flex items-center gap-2 rounded-lg bg-white/[0.06] px-3 py-2 text-sm ring-1 ring-white/10 transition-colors duration-200 hover:bg-white/[0.12]"
-                >
-                  {t.slug && (
-                    <img src={`https://cdn.simpleicons.org/${t.slug}/ffffff`} alt="" width="16" height="16" loading="lazy" className="size-4" />
-                  )}
-                  {t.name}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        ))}
+        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08}>
+              <div className="lift rounded-2xl bg-surface p-6 ring-1 ring-line">
+                <p className="text-4xl font-bold tracking-tight text-accent">
+                  <CountUp n={s.n} suffix={s.suffix} />
+                </p>
+                <p className="mt-1 text-sm text-muted">{s.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <div className="mt-12 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+          {stack.map((g, gi) => (
+            <Reveal key={g.group} delay={gi * 0.06}>
+              <h3 className="text-sm font-semibold">{g.group}</h3>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {g.items.map((t) => (
+                  <li key={t.name} className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 text-sm text-muted ring-1 ring-line">
+                    {t.slug && <img src={`https://cdn.simpleicons.org/${t.slug}/14a08f`} alt="" width="14" height="14" loading="lazy" className="size-3.5" />}
+                    {t.name}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -297,65 +366,33 @@ function useFilter(items) {
   return { cat, setCat, cats, shown: cat === 'All' ? items : items.filter((x) => x.cat === cat) }
 }
 
-function Filters({ id, items, filter, dark }) {
+function Filters({ id, filter }) {
   return (
-    <Reveal className="mt-10">
-      <div role="group" aria-label={`Filter ${id} by category`} className="flex flex-wrap gap-2">
-        {filter.cats.map((c) => {
-          const on = c === filter.cat
-          const count = c === 'All' ? items.length : items.filter((x) => x.cat === c).length
-          const idle = dark ? 'text-white/70 ring-white/15 hover:text-white' : 'text-fg/70 ring-fg/15 hover:text-fg'
-          return (
-            <button
-              key={c}
-              onClick={() => filter.setCat(c)}
-              aria-pressed={on}
-              className={`press relative rounded-full px-4 py-3 text-sm font-medium ring-1 ring-inset ${
-                on ? `ring-transparent ${dark ? 'text-ink' : 'text-on-fg'}` : idle
-              }`}
-            >
-              {on && (
-                <motion.span
-                  layoutId={`chip-${id}`}
-                  className={`absolute inset-0 rounded-full ${dark ? 'bg-white' : 'bg-fg'}`}
-                  transition={{ type: 'spring', duration: 0.45, bounce: 0.15 }}
-                />
-              )}
-              <span className="relative">
-                {c}
-                <span className="ml-2 font-mono text-[11px] opacity-60">{count}</span>
-              </span>
-            </button>
-          )
-        })}
-      </div>
-    </Reveal>
+    <div role="group" aria-label={`Filter ${id} by category`} className="flex flex-wrap justify-center gap-1 rounded-2xl bg-surface p-1 ring-1 ring-line sm:mx-auto sm:w-fit sm:rounded-full">
+      {filter.cats.map((c) => {
+        const on = c === filter.cat
+        return (
+          <button
+            key={c}
+            onClick={() => filter.setCat(c)}
+            aria-pressed={on}
+            className={`press relative min-h-11 rounded-full px-4 text-sm font-medium ${on ? 'text-on-accent' : 'text-muted hover:text-fg'}`}
+          >
+            {on && <motion.span layoutId={`chip-${id}`} className="absolute inset-0 rounded-full bg-accent" transition={{ type: 'spring', duration: 0.45, bounce: 0.15 }} />}
+            <span className="relative">{c}</span>
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
-// Wipes its content in from the bottom the first time it scrolls into view.
-function Wipe({ className = '', children }) {
-  const reduce = useReducedMotion()
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
-      whileInView={{ clipPath: 'inset(0% 0% 0% 0%)' }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 1, ease }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-// Keyed children fade out, and the rest slide into the free space, when a filter changes.
-function FilterItem({ className = '', children }) {
+// Filtered-out items fade away while the rest slide into the free space.
+function FilterItem({ children }) {
   const reduce = useReducedMotion()
   return (
     <motion.div
       layout={!reduce}
-      className={className}
       initial={reduce ? false : { opacity: 0, scale: 0.97 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.2 } }}
@@ -366,51 +403,53 @@ function FilterItem({ className = '', children }) {
   )
 }
 
-function MediaCard({ item, dark, onOpen }) {
+function MediaCard({ item, onOpen }) {
   const Tag = onOpen ? 'button' : 'a'
   const action = onOpen ? { type: 'button', onClick: () => onOpen(item) } : { href: item.href, target: '_blank', rel: 'noreferrer' }
   return (
-    <Tag {...action} className="group block w-full text-left">
-      <Wipe className={`relative aspect-[3/2] overflow-hidden rounded-xl ${dark ? 'bg-white/10' : 'bg-fg/10'}`}>
+    <Tag {...action} className="lift group block h-full w-full overflow-hidden rounded-2xl bg-surface text-left ring-1 ring-line">
+      <span className="relative block aspect-[3/2] overflow-hidden bg-line">
         <img
           src={item.cover}
           alt={`${item.title} cover`}
           loading="lazy"
           className="size-full object-cover transition-transform duration-700 ease-[var(--ease-out-strong)] group-hover:scale-[1.04]"
         />
-        {item.views && <span className="absolute left-3 top-3 rounded-md bg-ink/75 px-2 py-1 font-mono text-[11px] uppercase tracking-[0.08em] text-white">{item.views}</span>}
-        <span className="absolute bottom-3 right-3 flex h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-white px-3 text-sm font-semibold text-ink shadow-md ring-1 ring-black/10 transition-transform duration-300 ease-[var(--ease-out-strong)] group-hover:scale-105">
+        {item.views && <span className="absolute left-3 top-3 rounded-lg bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">{item.views}</span>}
+        <span className="absolute bottom-3 right-3 flex h-10 min-w-10 items-center justify-center gap-1.5 rounded-full bg-white px-3 text-sm font-semibold text-[#0f1c24] shadow-md">
           {item.images ? (
             <>
-              <ImagesIcon size={18} weight="bold" /> {item.images.length}
+              <ImagesIcon size={16} weight="bold" /> {item.images.length}
             </>
           ) : item.views ? (
-            <Play size={18} weight="fill" />
+            <Play size={16} weight="fill" />
           ) : (
-            <ArrowUpRight size={18} weight="bold" />
+            <ArrowUpRight size={16} weight="bold" />
           )}
         </span>
-      </Wipe>
-      <h3 className="mt-5 font-display text-4xl uppercase leading-none tracking-wide">{item.title}</h3>
-      <p className={`mt-2 font-mono text-[11px] uppercase tracking-[0.1em] ${dark ? 'text-white/55' : 'text-smoke'}`}>
-        {item.cat}
-        {item.year && <> <span className="mx-1">/</span> {item.year}</>}
-      </p>
-      <p className={`mt-3 max-w-[46ch] text-sm leading-relaxed ${dark ? 'text-white/75' : 'text-fg/75'}`}>{item.blurb}</p>
+      </span>
+      <span className="block p-4">
+        <span className="block font-semibold tracking-tight">{item.title}</span>
+        <span className="mt-0.5 block text-xs font-medium text-accent">
+          {item.cat}
+          {item.year && ` · ${item.year}`}
+        </span>
+        <span className="mt-2 line-clamp-2 block text-sm leading-relaxed text-muted">{item.blurb}</span>
+      </span>
     </Tag>
   )
 }
 
-function Gallery({ id, items, dark, onOpen }) {
+function Gallery({ id, items, onOpen }) {
   const filter = useFilter(items)
   return (
     <>
-      <Filters id={id} items={items} filter={filter} dark={dark} />
-      <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2">
+      <Filters id={id} filter={filter} />
+      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout" initial={false}>
-          {filter.shown.map((item, i) => (
-            <FilterItem key={item.title} className={i % 2 ? 'sm:mt-14' : ''}>
-              <MediaCard item={item} dark={dark} onOpen={onOpen} />
+          {filter.shown.map((item) => (
+            <FilterItem key={item.title}>
+              <MediaCard item={item} onOpen={onOpen} />
             </FilterItem>
           ))}
         </AnimatePresence>
@@ -440,7 +479,7 @@ function Lightbox({ item, onClose }) {
     }
   }, [])
 
-  const arrow = 'press grid size-11 shrink-0 place-items-center rounded-full border border-white/25 hover:bg-white hover:text-ink'
+  const arrow = 'press grid size-11 shrink-0 place-items-center rounded-full ring-1 ring-white/25 hover:bg-white hover:text-[#0f1c24]'
   return (
     <motion.dialog
       ref={ref}
@@ -454,18 +493,18 @@ function Lightbox({ item, onClose }) {
         if (e.key === 'ArrowLeft') go(-1)
         if (e.key === 'ArrowRight') go(1)
       }}
-      className="fixed inset-0 m-0 size-full max-h-none max-w-none bg-ink p-4 text-white backdrop:bg-transparent md:p-8"
+      className="fixed inset-0 m-0 size-full max-h-none max-w-none bg-[#0c1214] p-4 text-white backdrop:bg-transparent md:p-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
     >
       <div className="mx-auto grid h-full max-w-5xl grid-rows-[auto_minmax(0,1fr)_auto] gap-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="truncate font-display text-2xl uppercase tracking-wide md:text-3xl">{item.title}</p>
-            <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-white/55">
-              {item.cat} <span className="mx-1">/</span> {i + 1} of {total}
+            <p className="truncate text-xl font-bold tracking-tight">{item.title}</p>
+            <p className="text-sm text-white/60">
+              {item.cat} · {i + 1} of {total}
             </p>
           </div>
           <button onClick={onClose} aria-label="Close photos" className={arrow}>
@@ -478,7 +517,7 @@ function Lightbox({ item, onClose }) {
               key={item.images[i]}
               src={item.images[i]}
               alt={`${item.title}, photo ${i + 1} of ${total}`}
-              className="max-h-full max-w-full rounded-lg object-contain md:min-w-[60%]"
+              className="max-h-full max-w-full rounded-xl object-contain md:min-w-[60%]"
               initial={reduce ? false : { opacity: 0, transform: 'scale(0.98)' }}
               animate={{ opacity: 1, transform: 'scale(1)' }}
               exit={{ opacity: 0 }}
@@ -504,80 +543,47 @@ function Lightbox({ item, onClose }) {
   )
 }
 
-function WorkSection({ id, n, title, intro, dark, children }) {
-  return (
-    <section
-      id={id}
-      className={`relative px-5 pb-24 pt-32 md:px-10 md:pb-32 dark:border-t dark:border-white/[0.06] ${dark ? 'bg-ink text-white' : 'bg-canvas text-fg'}`}
-    >
-      <Counter n={n} dark={dark} />
-      <div className="mx-auto max-w-6xl">
-        <SectionTitle dark={dark} compact>
-          {title}
-        </SectionTitle>
-        <Reveal>
-          <p className="mt-6 max-w-[38ch] text-xl leading-snug tracking-tight md:text-2xl">{intro}</p>
-        </Reveal>
-        {children}
-      </div>
-    </section>
-  )
-}
-
 function Photography() {
   const [open, setOpen] = useState(null)
   return (
-    <WorkSection id="photography" n={3} title="Photography" intro="Campus life as it happens, from ceremonies and stages to the people behind the paper.">
+    <>
       <Gallery id="photography" items={photos} onOpen={setOpen} />
-      <Reveal className="mt-16">
-        <a href={harpooner.href} target="_blank" rel="noreferrer" className="group inline-flex items-center gap-3 text-sm font-semibold">
-          <img src={harpooner.logo} alt="" loading="lazy" className="size-11 rounded-full object-cover ring-1 ring-fg/10" />
-          <span className="underline-offset-4 group-hover:underline">More on {harpooner.name}</span>
-          <ArrowUpRight size={14} weight="bold" />
-        </a>
-      </Reveal>
+      <a href={harpooner.href} target="_blank" rel="noreferrer" className="group mt-8 flex items-center justify-center gap-3 text-sm font-semibold">
+        <img src={harpooner.logo} alt="" loading="lazy" className="size-10 rounded-full object-cover ring-1 ring-line" />
+        <span className="underline-offset-4 group-hover:underline">More on {harpooner.name}</span>
+        <ArrowUpRight size={14} weight="bold" />
+      </a>
       <AnimatePresence>{open && <Lightbox key={open.title} item={open} onClose={() => setOpen(null)} />}</AnimatePresence>
-    </WorkSection>
+    </>
   )
 }
 
 function Videography() {
   return (
-    <WorkSection id="videography" n={4} title="Videography" intro="Highlights and documentaries shot for The Harpooner. Each one opens on Facebook." dark>
-      <Gallery id="videography" items={videos} dark />
-      <Reveal className="mt-24">
-        <a
-          href={award.href}
-          target="_blank"
-          rel="noreferrer"
-          className="group grid items-center gap-8 rounded-2xl bg-panel p-5 text-fg md:grid-cols-[18rem_1fr] md:gap-14 md:p-8"
-        >
-          <img src={award.image} alt={`${award.place}, ${award.contest} certificate poster`} loading="lazy" className="w-full rounded-xl" />
-          <div>
-            <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-rec">
-              <Trophy size={16} weight="fill" /> Recognition
-            </p>
-            <p className="mt-4 font-display text-7xl uppercase leading-[0.9] md:text-8xl">{award.place}</p>
-            <p className="mt-3 text-xl font-semibold tracking-tight">{award.contest}</p>
-            <p className="text-smoke">{award.org}</p>
-            <p className="mt-6 max-w-[48ch] leading-relaxed text-fg/80">
-              Entry: <em>{award.entry}</em>. Produced with {award.team}.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1 text-sm font-semibold underline-offset-4 group-hover:underline">
-              View the post <ArrowUpRight size={14} weight="bold" />
-            </span>
-          </div>
-        </a>
-      </Reveal>
-    </WorkSection>
+    <>
+      <Gallery id="videography" items={videos} />
+      <a href={award.href} target="_blank" rel="noreferrer" className="lift group mt-8 grid items-center gap-6 rounded-2xl bg-surface p-4 ring-1 ring-line sm:grid-cols-[9rem_1fr] md:p-5">
+        <img src={award.image} alt={`${award.place}, ${award.contest} certificate poster`} loading="lazy" className="w-full rounded-xl" />
+        <div>
+          <p className="flex items-center gap-2 text-sm font-semibold text-accent">
+            <Trophy size={16} weight="fill" /> {award.place}
+          </p>
+          <p className="mt-1 text-lg font-semibold tracking-tight">{award.contest}</p>
+          <p className="text-sm text-muted">{award.org}</p>
+          <p className="mt-2 text-sm text-muted">
+            <em>{award.entry}</em>, with {award.team}.
+          </p>
+        </div>
+      </a>
+    </>
   )
 }
 
 function Tags({ tags }) {
   return (
-    <ul className="mt-5 flex flex-wrap gap-2">
+    <ul className="mt-4 flex flex-wrap gap-2">
       {tags.map((t) => (
-        <li key={t} className="rounded-lg bg-fg/[0.06] px-3 py-2 text-sm ring-1 ring-fg/10">
+        <li key={t} className="rounded-lg bg-accent-soft px-2.5 py-1 text-sm font-medium text-accent">
           {t}
         </li>
       ))}
@@ -595,49 +601,32 @@ function DemoVideo({ app }) {
     if (inView) ref.current.play().catch(() => {})
     else ref.current.pause()
   }, [inView, reduce])
-  return (
-    <Wipe className="overflow-hidden rounded-2xl bg-ink ring-1 ring-fg/10">
-      <video
-        ref={ref}
-        src={app.video}
-        poster={app.poster}
-        aria-label={`${app.title} demo video`}
-        className="aspect-video w-full"
-        muted
-        loop
-        playsInline
-        controls
-        preload="none"
-      />
-    </Wipe>
-  )
+  return <video ref={ref} src={app.video} poster={app.poster} aria-label={`${app.title} demo video`} className="aspect-video w-full bg-black" muted loop playsInline controls preload="none" />
 }
 
 function AppFeature({ app }) {
   return (
-    <article>
+    <article className="overflow-hidden rounded-2xl bg-surface ring-1 ring-line">
       <DemoVideo app={app} />
-      <div className="mt-8 grid gap-10 md:grid-cols-2 md:gap-14">
-        <Reveal>
-          <div className="flex items-center gap-4">
-            <img src={app.icon} alt="" loading="lazy" className="size-14 rounded-xl bg-[#0f5f5c] object-contain p-2" />
+      <div className="grid gap-8 p-5 md:grid-cols-2 md:p-8">
+        <div>
+          <div className="flex items-center gap-3">
+            <img src={app.icon} alt="" loading="lazy" className="size-12 rounded-xl bg-[#0f5f5c] object-contain p-2" />
             <div>
-              <h3 className="font-display text-5xl uppercase leading-none tracking-wide">{app.title}</h3>
-              <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.1em] text-smoke">
-                {app.kind} <span className="mx-1">/</span> {app.year}
+              <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>
+              <p className="text-xs font-medium text-accent">
+                {app.kind} · {app.year}
               </p>
             </div>
           </div>
-          <p className="mt-5 max-w-[52ch] leading-relaxed text-fg/80">{app.blurb}</p>
+          <p className="mt-4 leading-relaxed text-muted">{app.blurb}</p>
           <Tags tags={app.tags} />
-        </Reveal>
+        </div>
         <ul className="self-center">
-          {app.features.map((f, i) => (
-            <Reveal key={f} delay={i * 0.07}>
-              <li className="flex gap-3 border-t border-fg/10 py-4 text-sm leading-relaxed">
-                <Check size={18} weight="bold" className="mt-0.5 shrink-0 text-rec" /> {f}
-              </li>
-            </Reveal>
+          {app.features.map((f) => (
+            <li key={f} className="flex gap-3 border-t border-line py-3 text-sm leading-relaxed first:border-t-0">
+              <Check size={18} weight="bold" className="mt-0.5 shrink-0 text-accent" /> {f}
+            </li>
           ))}
         </ul>
       </div>
@@ -647,16 +636,16 @@ function AppFeature({ app }) {
 
 function AppCard({ app }) {
   return (
-    <a href={app.href} target="_blank" rel="noreferrer" className="group grid gap-6 rounded-2xl bg-panel p-6 md:grid-cols-[1fr_auto] md:items-center md:p-8">
+    <a href={app.href} target="_blank" rel="noreferrer" className="lift group grid gap-4 rounded-2xl bg-surface p-5 ring-1 ring-line md:grid-cols-[1fr_auto] md:items-center md:p-8">
       <div>
-        <h3 className="font-display text-4xl uppercase leading-none tracking-wide">{app.title}</h3>
-        <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.1em] text-smoke">
-          {app.kind} <span className="mx-1">/</span> {app.year}
+        <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>
+        <p className="text-xs font-medium text-accent">
+          {app.kind} · {app.year}
         </p>
-        <p className="mt-4 max-w-[52ch] leading-relaxed text-fg/80">{app.blurb}</p>
+        <p className="mt-3 max-w-[56ch] leading-relaxed text-muted">{app.blurb}</p>
         <Tags tags={app.tags} />
       </div>
-      <span className="press grid size-11 place-items-center rounded-full border border-fg/20 group-hover:bg-fg group-hover:text-on-fg">
+      <span className="grid size-11 place-items-center rounded-full ring-1 ring-line transition-colors group-hover:bg-accent group-hover:text-on-accent group-hover:ring-accent">
         <ArrowUpRight size={18} weight="bold" />
       </span>
     </a>
@@ -666,16 +655,83 @@ function AppCard({ app }) {
 function Development() {
   const filter = useFilter(apps)
   return (
-    <WorkSection id="development" n={5} title="Development" intro="Apps built end to end, from the database and API to the screen in your hand.">
-      <Filters id="development" items={apps} filter={filter} />
-      <div className="mt-10 grid gap-14">
+    <>
+      <Filters id="development" filter={filter} />
+      <div className="mt-8 grid gap-5">
         <AnimatePresence mode="popLayout" initial={false}>
           {filter.shown.map((app) => (
             <FilterItem key={app.title}>{app.video ? <AppFeature app={app} /> : <AppCard app={app} />}</FilterItem>
           ))}
         </AnimatePresence>
       </div>
-    </WorkSection>
+    </>
+  )
+}
+
+const bodies = { photography: <Photography />, videography: <Videography />, development: <Development /> }
+
+function CategoryCard({ c, on, compact, onClick }) {
+  const Icon = icons[c.id]
+  return (
+    <button
+      onClick={onClick}
+      aria-expanded={on}
+      aria-controls="works-panel"
+      className={`group relative w-full overflow-hidden rounded-2xl bg-[#0f1c24] text-left text-white transition-[height,box-shadow] duration-500 ease-[var(--ease-out-strong)] ${
+        compact ? 'h-24 md:h-28' : 'h-56 md:h-96'
+      } ${on ? 'ring-[3px] ring-accent' : 'ring-1 ring-line'}`}
+    >
+      <img src={c.cover} alt="" loading="lazy" className="absolute inset-0 size-full object-cover transition-transform duration-700 ease-[var(--ease-out-strong)] group-hover:scale-105" />
+      <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
+      <span className="absolute inset-x-0 bottom-0 block p-3 md:p-5">
+        <Icon size={22} weight="bold" className={compact ? 'hidden md:block' : ''} />
+        <span className="mt-1 block text-sm font-semibold tracking-tight md:text-2xl">{c.title}</span>
+        {!compact && <span className="hidden text-sm text-white/75 md:block">{c.items.length} projects</span>}
+      </span>
+    </button>
+  )
+}
+
+function Works() {
+  const [openId, setOpenId] = useState(null)
+  const cards = useRef(null)
+  const reduce = useReducedMotion()
+  const open = categories.find((c) => c.id === openId)
+
+  useEffect(() => {
+    if (openId) cards.current.scrollIntoView({ block: 'start' })
+  }, [openId])
+
+  return (
+    <section id="works" className="scroll-mt-16 bg-tint px-5 py-24">
+      <div className="mx-auto max-w-6xl">
+        <SectionHead kicker="Portfolio showcase" title="My works" text="Pick a card to see the projects." />
+        <div ref={cards} className="mt-10 grid scroll-mt-[4.75rem] grid-cols-3 gap-3 md:gap-5">
+          {categories.map((c, i) => (
+            <Reveal key={c.id} delay={i * 0.08}>
+              <CategoryCard c={c} on={c.id === openId} compact={!!openId} onClick={() => setOpenId(c.id === openId ? null : c.id)} />
+            </Reveal>
+          ))}
+        </div>
+        <div id="works-panel">
+          <AnimatePresence mode="wait" initial={false}>
+            {open && (
+              <motion.div
+                key={open.id}
+                className="pt-8"
+                initial={reduce ? false : { opacity: 0, transform: 'translateY(20px)' }}
+                animate={{ opacity: 1, transform: 'translateY(0px)' }}
+                exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                transition={{ duration: 0.5, ease }}
+              >
+                <p className="mx-auto mb-6 max-w-[56ch] text-center text-muted">{open.intro}</p>
+                {bodies[open.id]}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -702,93 +758,66 @@ function CopyEmail() {
     setTimeout(() => setCopied(false), 2000)
   }
   return (
-    <button onClick={copy} className="press inline-flex h-12 items-center gap-2 rounded-lg border border-white/30 px-5 text-sm font-semibold uppercase tracking-[0.12em] hover:bg-white/10">
+    <button onClick={copy} className="press inline-flex h-12 items-center gap-2 rounded-xl bg-bg px-5 text-sm font-semibold ring-1 ring-line hover:ring-accent">
       {copied ? <Check size={18} weight="bold" /> : <Copy size={18} weight="bold" />}
       <span aria-live="polite">{copied ? 'Copied' : 'Copy email'}</span>
     </button>
   )
 }
 
-function Footer() {
-  const links = [
-    ['Gmail', gmailHref],
-    ['Facebook', profile.facebook],
-    ['GitHub', profile.github],
-  ]
+function Contact() {
   return (
-    <footer id="contact" className="relative overflow-hidden bg-ink px-5 pt-32 text-white md:px-10 dark:border-t dark:border-white/[0.06]">
-      <Counter n={6} dark />
-      <div className="mx-auto max-w-6xl border-t border-white/10 pt-16">
-        <MaskText as="p" className="font-display text-5xl uppercase leading-[0.95] md:text-7xl">
-          Got a project?
-        </MaskText>
-        <Reveal delay={0.1}>
-          <p className="mt-4 break-all text-lg text-white/80 md:text-2xl">{profile.email}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href={gmailHref}
-              target="_blank"
-              rel="noreferrer"
-              className="press inline-flex h-12 items-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold uppercase tracking-[0.12em] text-ink hover:bg-white/85"
-            >
-              <EnvelopeSimple size={18} weight="bold" /> Email me
-            </a>
-            <CopyEmail />
-          </div>
-        </Reveal>
-
-        <div className="mt-16 grid grid-cols-2 gap-10 text-sm md:grid-cols-3">
-          <ul className="space-y-2">
-            {nav.map(([l, h]) => (
-              <li key={h}>
-                <a href={h} className="text-white/70 transition-colors hover:text-white">
-                  {l}
+    <section id="contact" className="px-5 py-24">
+      <div className="mx-auto max-w-6xl">
+        <SectionHead kicker="Contact" title="Got a project?" text="Open for freelance work in apps, photo coverage and video." />
+        <div className="mt-10 grid gap-5 md:grid-cols-[1.4fr_1fr]">
+          <Reveal>
+            <div className="h-full rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
+              <h3 className="text-2xl font-bold tracking-tight">Say hello</h3>
+              <p className="mt-2 break-all text-muted">{profile.email}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a href={gmailHref} target="_blank" rel="noreferrer" className="press inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-strong">
+                  <EnvelopeSimple size={18} weight="bold" /> Email me
                 </a>
-              </li>
-            ))}
-          </ul>
-          <ul className="space-y-2">
-            {services.map((s) => (
-              <li key={s} className="text-white/70">
-                {s}
-              </li>
-            ))}
-          </ul>
-          <ul className="col-span-2 space-y-2 md:col-span-1">
-            {links.map(([l, h]) => (
-              <li key={l}>
-                <a href={h} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-white/70 transition-colors hover:text-white">
-                  {l} <ArrowUpRight size={12} weight="bold" />
-                </a>
-              </li>
-            ))}
-          </ul>
+                <CopyEmail />
+              </div>
+              <div className="mt-6">
+                <Socials />
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="h-full rounded-2xl bg-surface p-6 ring-1 ring-line md:p-8">
+              <h3 className="text-2xl font-bold tracking-tight">What I do</h3>
+              <ul className="mt-4">
+                {services.map((s) => (
+                  <li key={s} className="flex items-center gap-3 border-t border-line py-3 text-sm first:border-t-0">
+                    <Check size={18} weight="bold" className="shrink-0 text-accent" /> {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
         </div>
       </div>
-
-      <MaskText as="p" className="mt-20 select-none whitespace-nowrap text-center font-display text-[24vw] uppercase leading-[0.8] tracking-tight" aria-hidden="true">
-        {profile.name}
-      </MaskText>
-      <div className="mx-auto flex max-w-6xl justify-between gap-4 border-t border-white/10 py-6 font-mono text-[11px] uppercase tracking-[0.1em] text-white/50">
-        <span>© {year} {profile.fullName}</span>
-        <span>Open for freelance work</span>
-      </div>
-    </footer>
+    </section>
   )
 }
 
 export default function App() {
   return (
     <>
+      <Loader />
       <Nav />
       <main>
         <Hero />
         <About />
-        <Photography />
-        <Videography />
-        <Development />
+        <Works />
+        <Contact />
       </main>
-      <Footer />
+      <footer className="border-t border-line px-5 py-6 text-center text-sm text-muted">
+        © {year} {profile.fullName}
+      </footer>
     </>
   )
 }

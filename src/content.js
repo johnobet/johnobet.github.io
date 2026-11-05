@@ -4,7 +4,9 @@ export const profile = {
   name: 'John Obet',
   fullName: 'John Obet Olchondra',
   roles: ['Full Stack Developer', 'Photojournalist', 'Videographer'],
-  heroLines: ['Android & Full Stack Developer', 'Photojournalist & Videographer'],
+  location: 'Bohol, Philippines',
+  lead: 'I build mobile and web apps end to end, and I cover campus stories with a camera for The Harpooner, the student publication of BISU Candijay Campus.',
+  chips: ['Flutter', 'React', 'FastAPI', 'Photography', 'Videography'],
   // Cut-out portrait (transparent WebP). Drop it at public/me.webp.
   portrait: 'me.webp',
   email: 'johnobetolchondra47@gmail.com',
@@ -15,6 +17,17 @@ export const profile = {
 
 export const about =
   'John Obet Olchondra is a developer and visual storyteller from Bohol. He builds mobile and web apps end to end, from the database and API to the screen in your hand. Behind the camera, he is a photojournalist and videographer for The Harpooner, the official student publication of BISU Candijay Campus, covering campus events, intramurals, and commencement exercises.'
+
+export const stats = [
+  { n: 10, suffix: '', label: 'Projects on this site' },
+  { n: 43, suffix: 'K', label: 'Views on my top video' },
+  { n: 3, suffix: 'rd', label: 'Place, Geopark video contest' },
+]
+
+export const heroFacts = [
+  { value: '3rd Place', label: 'Geopark video contest' },
+  { value: '43K views', label: '50th Commencement video' },
+]
 
 // slug = Simple Icons name (https://simpleicons.org). No slug = text only.
 export const stack = [
@@ -172,6 +185,32 @@ export const harpooner = {
   logo: 'works/harpooner-logo.jpg',
   href: 'https://www.facebook.com/bisuTheHarpooner/',
 }
+
+// The three cards in Works. Each one opens its own full-screen view at #id.
+export const categories = [
+  {
+    id: 'photography',
+    title: 'Photography',
+    intro: 'Campus life as it happens, from ceremonies and stages to the people behind the paper.',
+    cover: shot('musical-2'),
+    items: photos,
+  },
+  {
+    id: 'videography',
+    title: 'Videography',
+    intro: 'Highlights and documentaries shot for The Harpooner. Each one opens on Facebook.',
+    cover: 'works/commencement.jpg',
+    items: videos,
+    dark: true,
+  },
+  {
+    id: 'development',
+    title: 'Development',
+    intro: 'Apps built end to end, from the database and API to the screen in your hand.',
+    cover: 'works/stayease-cover.jpg',
+    items: apps,
+  },
+]
 
 export const award = {
   place: '3rd Place',
