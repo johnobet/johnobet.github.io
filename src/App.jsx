@@ -10,6 +10,7 @@ import {
   Check,
   Code,
   Copy,
+  DownloadSimple,
   EnvelopeSimple,
   FacebookLogo,
   GithubLogo,
@@ -621,6 +622,10 @@ function AppFeature({ app }) {
           </div>
           <p className="mt-4 leading-relaxed text-muted">{app.blurb}</p>
           <Tags tags={app.tags} />
+          <a href={app.apk.href} download className="press mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-strong">
+            <DownloadSimple size={18} weight="bold" /> Download for Android
+          </a>
+          <p className="mt-2 text-xs text-muted">APK · {app.apk.size} · Your phone may ask you to allow the install.</p>
         </div>
         <ul className="self-center">
           {app.features.map((f) => (

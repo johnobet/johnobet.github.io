@@ -167,6 +167,7 @@ export const apps = [
     tags: ['Flutter', 'Firebase', 'FastAPI', 'PayMongo', 'Cloudinary', 'OpenStreetMap'],
     icon: 'works/stayease-icon.png',
     video: 'works/stayease-demo.mp4',
+    apk: { href: 'downloads/StayEase.apk', size: '59 MB' },
     poster: 'works/stayease-poster.jpg',
   },
   {
