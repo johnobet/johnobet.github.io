@@ -19,7 +19,7 @@ export const about =
   'John Obet Olchondra is a developer and visual storyteller from Bohol. He builds mobile and web apps end to end, from the database and API to the screen in your hand. Behind the camera, he is a photojournalist and videographer for The Harpooner, the official student publication of BISU Candijay Campus, covering campus events, intramurals, and commencement exercises.'
 
 export const stats = [
-  { n: 10, suffix: '', label: 'Projects on this site' },
+  { n: 11, suffix: '', label: 'Projects on this site' },
   { n: 43, suffix: 'K', label: 'Views on my top video' },
   { n: 3, suffix: 'rd', label: 'Place, Geopark video contest' },
 ]
@@ -168,6 +168,16 @@ export const apps = [
     icon: 'works/stayease-icon.png',
     video: 'works/stayease-demo.mp4',
     poster: 'works/stayease-poster.jpg',
+  },
+  {
+    title: 'Gym System',
+    cat: 'Web',
+    kind: 'Web app',
+    year: '2026',
+    blurb: 'A gym website and member system with live machine availability, class booking, visit requests and clear membership plans. Opens the live demo.',
+    tags: ['Next.js', 'Railway'],
+    image: 'works/gym-cover.jpg',
+    href: 'https://gym-production-d188.up.railway.app/',
   },
   {
     title: 'This Portfolio',

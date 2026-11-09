@@ -636,18 +636,30 @@ function AppFeature({ app }) {
 
 function AppCard({ app }) {
   return (
-    <a href={app.href} target="_blank" rel="noreferrer" className="lift group grid gap-4 rounded-2xl bg-surface p-5 ring-1 ring-line md:grid-cols-[1fr_auto] md:items-center md:p-8">
-      <div>
-        <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>
-        <p className="text-xs font-medium text-accent">
-          {app.kind} · {app.year}
-        </p>
-        <p className="mt-3 max-w-[56ch] leading-relaxed text-muted">{app.blurb}</p>
-        <Tags tags={app.tags} />
+    <a href={app.href} target="_blank" rel="noreferrer" className={`lift group grid overflow-hidden rounded-2xl bg-surface ring-1 ring-line ${app.image ? 'md:grid-cols-2' : ''}`}>
+      {app.image && (
+        <span className="block overflow-hidden bg-line">
+          <img
+            src={app.image}
+            alt={`${app.title} home page`}
+            loading="lazy"
+            className="aspect-[16/10] size-full object-cover transition-transform duration-700 ease-[var(--ease-out-strong)] group-hover:scale-[1.04]"
+          />
+        </span>
+      )}
+      <div className="grid gap-4 p-5 md:grid-cols-[1fr_auto] md:items-center md:p-8">
+        <div>
+          <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>
+          <p className="text-xs font-medium text-accent">
+            {app.kind} · {app.year}
+          </p>
+          <p className="mt-3 max-w-[56ch] leading-relaxed text-muted">{app.blurb}</p>
+          <Tags tags={app.tags} />
+        </div>
+        <span className="grid size-11 place-items-center rounded-full ring-1 ring-line transition-colors group-hover:bg-accent group-hover:text-on-accent group-hover:ring-accent">
+          <ArrowUpRight size={18} weight="bold" />
+        </span>
       </div>
-      <span className="grid size-11 place-items-center rounded-full ring-1 ring-line transition-colors group-hover:bg-accent group-hover:text-on-accent group-hover:ring-accent">
-        <ArrowUpRight size={18} weight="bold" />
-      </span>
     </a>
   )
 }
