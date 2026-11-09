@@ -612,7 +612,7 @@ function AppFeature({ app }) {
       <div className="grid gap-8 p-5 md:grid-cols-2 md:p-8">
         <div>
           <div className="flex items-center gap-3">
-            <img src={app.icon} alt="" loading="lazy" className="size-12 rounded-xl bg-[#0f5f5c] object-contain p-2" />
+            {app.icon && <img src={app.icon} alt="" loading="lazy" className="size-12 rounded-xl bg-[#0f5f5c] object-contain p-2" />}
             <div>
               <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>
               <p className="text-xs font-medium text-accent">
@@ -622,10 +622,19 @@ function AppFeature({ app }) {
           </div>
           <p className="mt-4 leading-relaxed text-muted">{app.blurb}</p>
           <Tags tags={app.tags} />
-          <a href={app.apk.href} download className="press mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-strong">
-            <DownloadSimple size={18} weight="bold" /> Download for Android
-          </a>
-          <p className="mt-2 text-xs text-muted">APK · {app.apk.size} · Your phone may ask you to allow the install.</p>
+          {app.apk && (
+            <>
+              <a href={app.apk.href} download className="press mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-strong">
+                <DownloadSimple size={18} weight="bold" /> Download for Android
+              </a>
+              <p className="mt-2 text-xs text-muted">APK · {app.apk.size} · Your phone may ask you to allow the install.</p>
+            </>
+          )}
+          {app.href && (
+            <a href={app.href} target="_blank" rel="noreferrer" className="press mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-on-accent hover:bg-accent-strong">
+              <ArrowUpRight size={18} weight="bold" /> Open live demo
+            </a>
+          )}
         </div>
         <ul className="self-center">
           {app.features.map((f) => (
@@ -641,17 +650,7 @@ function AppFeature({ app }) {
 
 function AppCard({ app }) {
   return (
-    <a href={app.href} target="_blank" rel="noreferrer" className={`lift group grid overflow-hidden rounded-2xl bg-surface ring-1 ring-line ${app.image ? 'md:grid-cols-2' : ''}`}>
-      {app.image && (
-        <span className="block overflow-hidden bg-line">
-          <img
-            src={app.image}
-            alt={`${app.title} home page`}
-            loading="lazy"
-            className="aspect-[16/10] size-full object-cover transition-transform duration-700 ease-[var(--ease-out-strong)] group-hover:scale-[1.04]"
-          />
-        </span>
-      )}
+    <a href={app.href} target="_blank" rel="noreferrer" className="lift group grid overflow-hidden rounded-2xl bg-surface ring-1 ring-line">
       <div className="grid gap-4 p-5 md:grid-cols-[1fr_auto] md:items-center md:p-8">
         <div>
           <h3 className="text-2xl font-bold tracking-tight">{app.title}</h3>

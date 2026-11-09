@@ -175,9 +175,16 @@ export const apps = [
     cat: 'Web',
     kind: 'Web app',
     year: '2026',
-    blurb: 'A gym website and member system with live machine availability, class booking, visit requests and clear membership plans. Opens the live demo.',
+    blurb: 'A gym management system with its own public website. Members check in by QR and pay through GCash, and the owner sees attendance, income and who needs a reminder.',
+    features: [
+      'QR check-in with attendance that updates by itself',
+      'GCash payments checked against each reference number',
+      'Reminders for members who stopped coming or are due to renew',
+      'Public site with live machine availability, class booking and plans',
+    ],
     tags: ['Next.js', 'Railway'],
-    image: 'works/gym-cover.jpg',
+    video: 'works/gym-demo.mp4',
+    poster: 'works/gym-poster.jpg',
     href: 'https://gym-production-d188.up.railway.app/',
   },
   {
